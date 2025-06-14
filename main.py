@@ -1,17 +1,15 @@
 import streamlit as st
 import random
 
-# Cấu hình trang
-st.set_page_config(page_title="Snake Game", page_icon="🐍")
+st.set_page_config(page_title="🐍 Snake Game", page_icon="🐍")
 
-# Khởi tạo trạng thái
+# Khởi tạo
 if "snake" not in st.session_state:
     st.session_state.snake = [(5, 5)]
     st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
     st.session_state.direction = "RIGHT"
     st.session_state.game_over = False
 
-# Hàm vẽ lưới
 def draw_grid():
     grid = ""
     for y in range(10):
@@ -25,48 +23,37 @@ def draw_grid():
         grid += "\n"
     return grid
 
-# Di chuyển rắn
 def move_snake():
     if st.session_state.game_over:
         return
 
-    head_x, head_y = st.session_state.snake[0]
-    direction = st.session_state.direction
+    x, y = st.session_state.snake[0]
+    if st.session_state.direction == "UP": y -= 1
+    elif st.session_state.direction == "DOWN": y += 1
+    elif st.session_state.direction == "LEFT": x -= 1
+    elif st.session_state.direction == "RIGHT": x += 1
 
-    if direction == "UP":
-        head_y -= 1
-    elif direction == "DOWN":
-        head_y += 1
-    elif direction == "LEFT":
-        head_x -= 1
-    elif direction == "RIGHT":
-        head_x += 1
+    new_head = (x, y)
 
-    new_head = (head_x, head_y)
-
-    # Kiểm tra va chạm
     if (new_head in st.session_state.snake or
-        not 0 <= head_x < 10 or not 0 <= head_y < 10):
+        not 0 <= x < 10 or not 0 <= y < 10):
         st.session_state.game_over = True
         return
 
     st.session_state.snake = [new_head] + st.session_state.snake
-
     if new_head == st.session_state.food:
         st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
     else:
         st.session_state.snake.pop()
 
-# Hiển thị trò chơi
-st.title("🐍 Snake Game (Streamlit phiên bản đơn giản)")
-st.markdown(draw_grid())
+st.title("🐍 Snake Game (Streamlit)")
 
-# Hiển thị điều khiển
+st.text(draw_grid())
+
 col1, col2, col3 = st.columns(3)
 with col2:
     if st.button("⬆️"):
         st.session_state.direction = "UP"
-
 col1, _, col3 = st.columns([1, 0.2, 1])
 with col1:
     if st.button("⬅️"):
@@ -74,18 +61,15 @@ with col1:
 with col3:
     if st.button("➡️"):
         st.session_state.direction = "RIGHT"
-
 col1, col2, col3 = st.columns(3)
 with col2:
     if st.button("⬇️"):
         st.session_state.direction = "DOWN"
 
-# Tự động di chuyển mỗi lần chạy
 move_snake()
 
-# Kết thúc
 if st.session_state.game_over:
-    st.error("💀 Game Over! Nhấn nút dưới để chơi lại.")
+    st.error("💀 Game Over!")
     if st.button("🔁 Chơi lại"):
         st.session_state.snake = [(5, 5)]
         st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
