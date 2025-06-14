@@ -1,76 +1,47 @@
 import streamlit as st
-import random
+from datetime import datetime
 
-st.set_page_config(page_title="🐍 Snake Game", page_icon="🐍")
+# Dữ liệu báo mẫu
+news_data = [
+    {
+        "title": "Việt Nam thắng đậm Thái Lan 3-0 tại AFF Cup",
+        "content": "Đội tuyển Việt Nam đã thi đấu thăng hoa và giành chiến thắng trước Thái Lan với tỉ số 3-0 trong trận chung kết lượt đi AFF Cup...",
+        "image": "https://cdnmedia.baotintuc.vn/Upload/zWp5cYx9kgfy0sBAo7FQ/files/vietnam-thailand.jpg",
+        "date": "2025-06-13"
+    },
+    {
+        "title": "Bộ Giáo dục công bố lịch thi tốt nghiệp THPT 2025",
+        "content": "Bộ GD&ĐT vừa công bố lịch thi tốt nghiệp THPT quốc gia năm 2025. Kỳ thi sẽ diễn ra trong ba ngày, từ 25 đến 27 tháng 6...",
+        "image": "https://i1-vnexpress.vnecdn.net/2024/04/01/thi-thpt-quoc-gia.jpg",
+        "date": "2025-06-12"
+    },
+    {
+        "title": "TP.HCM cấm xe máy khu trung tâm từ năm 2030",
+        "content": "Chính quyền thành phố Hồ Chí Minh vừa công bố kế hoạch cấm xe máy vào khu trung tâm từ năm 2030 để giảm ùn tắc và ô nhiễm...",
+        "image": "https://cdn.tuoitre.vn/thumb_w/730/471584752817336320/2024/4/22/xe-may-1713754067717908856906.jpeg",
+        "date": "2025-06-10"
+    }
+]
 
-if "snake" not in st.session_state:
-    st.session_state.snake = [(5, 5)]
-    st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
-    st.session_state.direction = "RIGHT"
-    st.session_state.game_over = False
+# Cài đặt trang
+st.set_page_config(page_title="📰 Trang đọc báo", page_icon="🗞️", layout="wide")
 
-def draw_grid():
-    grid = ""
-    for y in range(10):
-        for x in range(10):
-            if (x, y) == st.session_state.food:
-                grid += "🍎"
-            elif (x, y) in st.session_state.snake:
-                grid += "🟩"
-            else:
-                grid += "⬜"
-        grid += "\n"
-    return grid
+# Header
+st.title("🗞️ Trang Đọc Báo Online")
+st.markdown("Chào mừng bạn đến với trang báo điện tử Streamlit!")
 
-def move_snake():
-    if st.session_state.game_over:
-        return
+# Sidebar: chọn bài viết
+titles = [item["title"] for item in news_data]
+selected_title = st.sidebar.selectbox("📰 Chọn bài viết", titles)
 
-    x, y = st.session_state.snake[0]
-    if st.session_state.direction == "UP": y -= 1
-    elif st.session_state.direction == "DOWN": y += 1
-    elif st.session_state.direction == "LEFT": x -= 1
-    elif st.session_state.direction == "RIGHT": x += 1
+# Hiển thị bài viết được chọn
+selected_article = next(item for item in news_data if item["title"] == selected_title)
 
-    new_head = (x, y)
+st.image(selected_article["image"], use_column_width=True)
+st.header(selected_article["title"])
+st.caption(f"🗓️ Ngày đăng: {selected_article['date']}")
+st.markdown(selected_article["content"])
 
-    if (new_head in st.session_state.snake or
-        not 0 <= x < 10 or not 0 <= y < 10):
-        st.session_state.game_over = True
-        return
-
-    st.session_state.snake = [new_head] + st.session_state.snake
-    if new_head == st.session_state.food:
-        st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
-    else:
-        st.session_state.snake.pop()
-
-st.title("🐍 Snake Game (Streamlit)")
-
-st.text(draw_grid())
-
-col1, col2, col3 = st.columns(3)
-with col2:
-    if st.button("⬆️"):
-        st.session_state.direction = "UP"
-col1, _, col3 = st.columns([1, 0.2, 1])
-with col1:
-    if st.button("⬅️"):
-        st.session_state.direction = "LEFT"
-with col3:
-    if st.button("➡️"):
-        st.session_state.direction = "RIGHT"
-col1, col2, col3 = st.columns(3)
-with col2:
-    if st.button("⬇️"):
-        st.session_state.direction = "DOWN"
-
-move_snake()
-
-if st.session_state.game_over:
-    st.error("💀 Game Over!")
-    if st.button("🔁 Chơi lại"):
-        st.session_state.snake = [(5, 5)]
-        st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
-        st.session_state.direction = "RIGHT"
-        st.session_state.game_over = False
+# Footer
+st.markdown("---")
+st.markdown("© 2025 - Trang đọc báo Streamlit | Thiết kế bởi bạn và ChatGPT 😄")
