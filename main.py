@@ -3,7 +3,6 @@ import random
 
 st.set_page_config(page_title="🐍 Snake Game", page_icon="🐍")
 
-# Khởi tạo
 if "snake" not in st.session_state:
     st.session_state.snake = [(5, 5)]
     st.session_state.food = (random.randint(0, 9), random.randint(0, 9))
