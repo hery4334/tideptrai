@@ -44,4 +44,4 @@ st.markdown(selected_article["content"])
 
 # Footer
 st.markdown("---")
-st.markdown("© 2025 - Trang đọc báo Streamlit | Thiết kế bởi bạn và ChatGPT 😄")
+st.markdown("văn em yêu")
